@@ -103,3 +103,47 @@
 .bill-empty{text-align:center;padding:42px 20px}
 .bill-empty h2{font-size:1.15rem}
 @media(max-width:480px){.my-bill{padding:28px 16px}.bill-items{padding:0 14px}.bill-row{grid-template-columns:52px minmax(0,1fr) auto;gap:10px}.bill-row img{width:52px;height:52px}.bill-name>span,.bill-amount strong{font-size:.85rem}.bill-total{padding:20px 14px}.bill-total strong{font-size:1.1rem}}
+
+#demo-table {
+    width: 100px;
+    height: 40px;
+
+    padding: 0 18px;
+    margin-bottom: 12px ;
+    margin-top: 12px;
+    
+    border:none;
+    border-radius: 14px;
+
+    background: #f8f6ef;
+
+    color: #1e251f;
+
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 600;
+    outline: none;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+    transition:0.2 ease;
+}
+
+#demo-table:hover {
+    border-color: rgba(255, 255, 255, 0.7);
+}
+
+#demo-table:focus {
+    border-color: #ffb84d;
+
+    box-shadow:
+        0 0 0 4px rgba(255, 184, 77, 0.2),
+        0 8px 20px rgba(0, 0, 0, 0.12);
+
+    transform: translateY(-1px);
+}
+
+#demo-table::-webkit-inner-spin-button,
+#demo-table::-webkit-outer-spin-button {
+    opacity: 0;
+}
