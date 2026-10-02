@@ -28,13 +28,13 @@ npm ci
 npm run dev
 ```
 
-Open the address printed by Vite and click **Vào bàn 5**. Keep `/kitchen` open in another window for the live demo.
+Open the address printed by Vite and enter a table number (1–12) and click **Vào bàn …**. Keep `/kitchen` open in another window for the live demo.
 
 ### Scanning the QR code with a phone
 
 1. Put the phone and the computer on the same Wi-Fi.
 2. Run `npm run dev:lan` instead of `npm run dev`. Vite prints a `Network:` address such as `http://192.168.1.20:5173`.
-3. Open `/demo` on the computer **using that network address** (not `localhost`). The QR code now encodes `http://192.168.1.20:5173/menu?table=5`, which the phone can open.
+3. Open `/demo` on the computer **using that network address** (not `localhost`). Choose a table number (1–12). The QR code uses that number, for example `http://192.168.1.20:5173/menu?table=3` for table 3.
 
 If the backend runs on another port, start Vite with `BACKEND_URL=http://localhost:<port> npm run dev`.
 
@@ -60,8 +60,8 @@ Browsers allow only ~6 open connections per site over HTTP/1.1 and every open pa
 
 ## Presentation demo
 
-1. Open `/demo`, explain that the QR encodes `/menu?table=5`.
-2. Click **Vào bàn 5**, add food and place the order.
+1. Open `/demo`, enter a table number (1–12); the QR updates to `/menu?table=<number>`.
+2. Click **Vào bàn …**, add food and place the order.
 3. Switch to `/kitchen`; the order appears live.
 4. Click **Bắt đầu chế biến**, then **Chế biến xong**.
 5. Return to the customer screen: **Đã nhận món** remains a simple confirmation without a timeline.
@@ -90,11 +90,16 @@ Order IDs/statuses remain in the backend and Kitchen but are not shown in My ord
 
 ```bash
 cd frontend
-node --test tests/order-summary.test.mjs
+node --test tests/ src/staff/
 npm run build
 cd ../backend
-python -m unittest test_app.py
+python -m unittest test_app
 ```
+
+Nếu Node không nhận đường dẫn thư mục trong lệnh test (ví dụ Node 24), chạy
+`node --test tests/*.test.mjs src/staff/*.test.mjs` trong `frontend` để chạy cùng
+bộ test. Kết quả kiểm tra bản sửa: backend 19/19 test, frontend 13/13 test;
+`npm run build` thành công.
 
 ## Màn hình nhân viên (mới)
 
@@ -115,8 +120,21 @@ Cả ba màn hình đều yêu cầu đăng nhập bằng mã PIN. Tài khoản 
 Đổi PIN và đặt `SECRET_KEY` trước khi dùng thật:
 
 ```bash
-SECRET_KEY="chuoi-bi-mat-cua-ban" DEBUG=0 python app.py
+KITCHEN_PIN="4821" CASHIER_PIN="5932" MANAGER_PIN="6043" \
+SECRET_KEY="thay-bang-chuoi-ngau-nhien-bi-mat" DEBUG=0 python app.py
 ```
+
+Các biến `KITCHEN_PIN`, `CASHIER_PIN`, `MANAGER_PIN` được đọc lúc khởi động,
+chỉ dùng để tạo tài khoản khi bảng `staff` chưa có dữ liệu. Nếu không đặt biến,
+PIN mặc định lần lượt là `1111`, `2222`, `3333`. Dùng PIN gồm 4–8 chữ số và khác
+nhau cho từng vai trò. Thay biến môi trường không đổi PIN đã lưu trong database;
+không xóa database đang dùng để đổi PIN vì sẽ mất dữ liệu.
+
+`SECRET_KEY` được đọc từ môi trường; nếu vẫn dùng `dev-secret-change-me`, backend
+in cảnh báo vào log. Không đưa PIN hoặc khóa thật vào mã nguồn/repo public.
+
+Backend đã bỏ CORS. Frontend gọi `/api` cùng origin qua proxy Vite; khi triển khai,
+cần cấu hình reverse proxy để `/api` trỏ đến Flask trên cùng origin.
 
 ### Phiên bàn
 

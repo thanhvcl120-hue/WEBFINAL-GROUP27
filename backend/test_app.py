@@ -259,5 +259,60 @@ class OrderingTests(unittest.TestCase):
         self.assertEqual(self.client.patch("/api/menu/1", json={"available": False}).status_code, 403)
         self.assertTrue(server.MENU_BY_ID[1]["available"])
 
+class ConfigurationTests(unittest.TestCase):
+    def run_config(self, overrides):
+        import os
+        import shutil
+        import subprocess
+        import sys
+        with tempfile.TemporaryDirectory() as directory:
+            for name in ("app.py", "menu.json"):
+                shutil.copy(Path(server.__file__).with_name(name), directory)
+            env = {key: value for key, value in os.environ.items()
+                   if key not in ("SECRET_KEY", "KITCHEN_PIN", "CASHIER_PIN", "MANAGER_PIN")}
+            env.update(overrides)
+            script = """
+import json
+import app
+client = app.app.test_client()
+roles = []
+for _, role, pin in app.DEFAULT_STAFF:
+    response = client.post('/api/auth/login', json={'pin': pin})
+    assert response.status_code == 200
+    roles.append(response.get_json()['role'])
+print(json.dumps({'pins': [row[2] for row in app.DEFAULT_STAFF],
+                  'roles': roles, 'secret': app.app.config['SECRET_KEY']}))
+"""
+            result = subprocess.run([sys.executable, "-c", script], cwd=directory,
+                                    env=env, capture_output=True, text=True, check=True)
+            import json
+            return json.loads(result.stdout), result.stderr
+
+    def test_environment_pins_and_secret(self):
+        data, logs = self.run_config({"KITCHEN_PIN": "4821", "CASHIER_PIN": "5932",
+                                      "MANAGER_PIN": "6043", "SECRET_KEY": "test-private-key"})
+        self.assertEqual(data["pins"], ["4821", "5932", "6043"])
+        self.assertEqual(data["roles"], ["kitchen", "cashier", "manager"])
+        self.assertEqual(data["secret"], "test-private-key")
+        self.assertNotIn("SECRET_KEY đang dùng", logs)
+
+    def test_defaults_warn_and_still_login(self):
+        data, logs = self.run_config({})
+        self.assertEqual(data["pins"], ["1111", "2222", "3333"])
+        self.assertIn("SECRET_KEY đang dùng giá trị mặc định", logs)
+
+    def test_explicit_default_secret_also_warns(self):
+        _, logs = self.run_config({"SECRET_KEY": "dev-secret-change-me"})
+        self.assertIn("SECRET_KEY đang dùng giá trị mặc định", logs)
+
+    def test_no_cors_headers(self):
+        client = server.app.test_client()
+        for method in ("GET", "OPTIONS"):
+            response = client.open("/api/menu", method=method, headers={
+                "Origin": "https://untrusted.example", "Access-Control-Request-Method": "GET"})
+            self.assertEqual(response.status_code, 200)
+            self.assertNotIn("Access-Control-Allow-Origin", response.headers)
+            self.assertNotIn("Access-Control-Allow-Credentials", response.headers)
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request, Response, session
 from werkzeug.exceptions import HTTPException
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_cors import CORS
 from functools import wraps
 import json
 import os
@@ -22,7 +21,8 @@ app.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
     PERMANENT_SESSION_LIFETIME=timedelta(hours=12),
 )
-CORS(app, supports_credentials=True)
+if app.config["SECRET_KEY"] == "dev-secret-change-me":
+    app.logger.warning("SECRET_KEY đang dùng giá trị mặc định; hãy đặt biến môi trường SECRET_KEY trước khi dùng thật.")
 DB_PATH = Path(__file__).with_name("restaurant.db")
 MENU_PATH = Path(__file__).with_name("menu.json")
 menu_lock = threading.Lock()
@@ -45,7 +45,11 @@ OPEN_TABLE_FIRST = os.environ.get("OPEN_TABLE_FIRST", "1") == "1"
 PAYMENT_METHODS = {"cash": "Tiền mặt", "transfer": "Chuyển khoản", "card": "Thẻ"}
 ROLES = {"kitchen": "Bếp", "cashier": "Thu ngân", "manager": "Quản lý"}
 # Demo accounts, created on first run. Change the PINs before any real use.
-DEFAULT_STAFF = [("Bếp", "kitchen", "1111"), ("Thu ngân", "cashier", "2222"), ("Quản lý", "manager", "3333")]
+DEFAULT_STAFF = [
+    ("Bếp", "kitchen", os.environ.get("KITCHEN_PIN", "1111")),
+    ("Thu ngân", "cashier", os.environ.get("CASHIER_PIN", "2222")),
+    ("Quản lý", "manager", os.environ.get("MANAGER_PIN", "3333")),
+]
 
 # Stable IDs 1–6 preserve existing carts and order history.
 MENU = json.loads(MENU_PATH.read_text(encoding="utf-8"))

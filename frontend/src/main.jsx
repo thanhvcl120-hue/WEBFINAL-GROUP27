@@ -4,6 +4,7 @@ import { BrowserRouter, Link, Navigate, Route, Routes, useLocation, useNavigate,
 import { ArrowLeft, Check, ChefHat, ChevronDown, Clock3, Minus, Plus, Search, ShoppingBag, UtensilsCrossed, X } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import "./styles.css";
+import { parseDemoTable } from "./demo-table.js";
 import { summarizeOrders } from "./order-summary.js";
 import { RequireStaff } from "./staff/StaffLogin.jsx";
 import Cashier from "./staff/Cashier.jsx";
@@ -61,9 +62,14 @@ function Header({ hideCart = false }) {
 
 function Demo() {
   const navigate = useNavigate(); const { setTable } = useContext(AppContext);
-  const open = () => { setTable(5); navigate("/menu?table=5"); };
-  const menuUrl = `${window.location.origin}/menu?table=5`;
-  return <main className="demo-page"><div className="demo-copy"><h1>Gọi món dễ dàng,<br/><em>thưởng thức cùng nhau.</em></h1><p>Quét mã, chọn món và gửi yêu cầu ngay tại bàn.</p><button className="primary" onClick={open}>Vào bàn 5 <span>→</span></button><Link className="staff-link" to="/kitchen">Vào màn hình bếp</Link></div><div className="qr-card"><div className="qr-top"><span>BÀN</span><strong>05</strong></div><div className="qr"><QRCodeSVG value={menuUrl} size={199} bgColor="#f2eee3" fgColor="#1e251f" level="M"/></div><h2>Quét mã để gọi món</h2></div></main>;
+  const [tableInput, setTableInput] = useState("1");
+  const tableNumber = parseDemoTable(tableInput);
+  const open = () => {
+    if (tableNumber === null) return;
+    setTable(tableNumber); navigate(`/menu?table=${tableNumber}`);
+  };
+  const menuUrl = tableNumber === null ? null : `${window.location.origin}/menu?table=${tableNumber}`;
+  return <main className="demo-page"><div className="demo-copy"><h1>Gọi món dễ dàng,<br/><em>thưởng thức cùng nhau.</em></h1><p>Quét mã, chọn món và gửi yêu cầu ngay tại bàn.</p><label htmlFor="demo-table">Số bàn (1–12)</label><input id="demo-table" type="number" min="1" max="12" step="1" required value={tableInput} onChange={event => setTableInput(event.target.value)} aria-invalid={tableNumber === null} aria-describedby={tableNumber === null ? "demo-table-error" : undefined}/>{tableNumber === null && <p id="demo-table-error" role="alert">Vui lòng nhập số bàn nguyên từ 1 đến 12.</p>}<button className="primary" disabled={tableNumber === null} onClick={open}>Vào bàn {tableNumber ?? ""} <span>→</span></button><Link className="staff-link" to="/kitchen">Vào màn hình bếp</Link></div><div className="qr-card"><div className="qr-top"><span>BÀN</span><strong>{tableNumber === null ? "—" : String(tableNumber).padStart(2, "0")}</strong></div><div className="qr">{menuUrl && <QRCodeSVG value={menuUrl} size={199} bgColor="#f2eee3" fgColor="#1e251f" level="M"/>}</div><h2>Quét mã để gọi món</h2></div></main>;
 }
 
 // Accent-insensitive search: "pho" matches "Phở".
@@ -253,7 +259,7 @@ function MyOrders() {
         <div className="bill-name"><h2>{item.name}</h2><span>{item.prices.length === 1 ? money(item.prices[0]) : item.prices.map(money).join(" / ")}</span></div>
         <div className="bill-amount"><span aria-label={`Số lượng ${item.quantity}`}>× {item.quantity}</span><strong>{money(item.subtotal)}</strong></div>
       </li>)}</ul>}
-      <footer className="bill-total"><span>Tạm tính tiền</span><strong>{money(total)}</strong></footer>
+      {items.length > 0 && <footer className="bill-total"><span>Tạm tính tiền</span><strong>{money(total)}</strong></footer>}
     </section>}
   </main></>;
 }
