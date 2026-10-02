@@ -38,8 +38,8 @@
     "category": "Khai vị",
     "description": "Bánh cuốn mềm, nhân thịt nấm và hành phi.",
     "price": 45000,
-    "image": "https://www.wonderfulpackage.com/uploads/moxie/Article/vietnam/vietnamese-noodles/banh-cuon.png",
-    "imageSource": "https://www.wonderfulpackage.com/article/v/2127/",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/9/97/B%C3%A1nh_cu%E1%BB%91n_nh%C3%A2n_th%E1%BB%8Bt.JPG",
+    "imageSource": "https://commons.wikimedia.org/wiki/File:B%C3%A1nh_cu%E1%BB%91n_nh%C3%A2n_th%E1%BB%8Bt.JPG",
     "available": true,
     "popular": false
   },
@@ -159,8 +159,8 @@
     "category": "Món chính",
     "description": "Gà ướp sả nướng thơm, kèm cơm và rau.",
     "price": 95000,
-    "image": "https://hot-thai-kitchen.com/wp-content/uploads/2022/01/lemongrass-chicken-blog-720x480.jpg",
-    "imageSource": "https://hot-thai-kitchen.com/lemongrass-chicken/",
+    "image": "https://www.theseasonedwok.com/wp-content/uploads/2023/01/com-ga-nuong-lemongrass-chicken.jpg",
+    "imageSource": "https://www.theseasonedwok.com/com-ga-nuong-lemongrass-chicken/",
     "available": true,
     "popular": false
   },
@@ -225,8 +225,8 @@
     "category": "Món ăn kèm",
     "description": "Khoai tây chiên giòn với bơ tỏi và rau thơm.",
     "price": 45000,
-    "image": "https://www.fifteenspatulas.com/wp-content/uploads/2019/05/Baked-Garlic-Fries-Fifteen-Spatulas-1-640x959.jpg",
-    "imageSource": "https://www.fifteenspatulas.com/crispy-baked-garlic-fries/",
+    "image": "https://img-global.cpcdn.com/recipes/ea08d0c4d0294689/680x482cq70/khoai-tay-n%C6%B0%E1%BB%9Bng-b%C6%A1-t%E1%BB%8Fi-recipe-main-photo.jpg",
+    "imageSource": "https://cookpad.com/vn/cong-thuc/8129384",
     "available": true,
     "popular": false
   },
@@ -313,8 +313,8 @@
     "category": "Đồ uống",
     "description": "Cà phê nóng phủ kem trứng đánh bông.",
     "price": 50000,
-    "image": "https://vietravelasia.com/media/images/2022/12/xay-dung-menu-do-uong-doc-dao-6-5d38f7f1e1cdaa49d960eb13329b0ba4.jpg",
-    "imageSource": "https://vietravelasia.com/blog/where-to-have-the-best-egg-coffee-in-hanoi-20190711",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/b/bd/Egg_Coffee_at_Cafe_Gi%E1%BA%A3ng%2C_H%C3%A0_N%E1%BB%99i%2C_Vietnam.jpg",
+    "imageSource": "https://commons.wikimedia.org/wiki/File:Egg_Coffee_at_Cafe_Gi%E1%BA%A3ng,_H%C3%A0_N%E1%BB%99i,_Vietnam.jpg",
     "available": true,
     "popular": true
   },
